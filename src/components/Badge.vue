@@ -1,8 +1,15 @@
 <script lang="ts">
   export default {
     methods: {
-      say: function (address: string) {
+      say: async function (address: string) {
         console.log(address)
+        try{
+            await navigator.clipboard.writeText(address)
+            alert('Copied Email')
+        } catch{
+            alert('Cannot Copy')
+        }
+
         // Next step is to figure out how to copy to clip board
       },
     },
