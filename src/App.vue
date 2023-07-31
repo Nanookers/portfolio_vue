@@ -8,7 +8,7 @@
   <!-- resume official / resume Character sheet -->
   <!-- Cover Letter official / cover letter in chartacter sheet-->
   <!-- Dice roll? -->
-  <!-- <Badge />  -->
+  <Badge /> 
   <div class="diceContainer"><Dice /></div>
   
 </template>
@@ -18,6 +18,6 @@
   display: flex;
   justify-content: center; /* Center horizontally */
   align-items: center; /* Center vertically */
-  height: 100vh; /* Set the container to full viewport height */
+  height: 50vh; /* Set the container to full viewport height */
 }
 </style>
