@@ -5,14 +5,14 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import * as THREE from 'three';
-import { TTFLoader } from 'three/examples/jsm/loaders/TTFLoader'; 
-import { FontLoader } from 'three/examples/jsm/loaders/FontLoader'; 
-import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'; 
+import { RapierPhysics } from 'three/addons/physics/RapierPhysics.js';
+
 // Function to create the 3D scene
-function createScene() {  
+async function createScene() {  
+  const physics = await RapierPhysics();
+  // physics.setGravity(0, -9.81, 0)
 
   const scene = new THREE.Scene()
-  // wet to white so I can see the object. 
   scene.background = new THREE.Color('white')
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
   // Create a new renderer
@@ -23,30 +23,25 @@ function createScene() {
   renderer.setSize( window.innerWidth, window.innerHeight );
   camera.position.setZ(30);
   renderer.render( scene, camera ) 
+
+  // Creating a floor
+  const floor = new THREE.Mesh(
+    new THREE.PlaneGeometry( 50, 50 ), //This functions as geometry
+    new THREE.MeshBasicMaterial( {color: 'green', side: THREE.DoubleSide} ) //this functions as material
+  );
+  floor.position.y = -10.5;
+  floor.rotation.x = THREE.MathUtils.degToRad(90);
+  floor.receiveShadow = true;
+  scene.add( floor );
+  physics.addMesh( floor );
+
   // Create an icosahedron
-  const geometry = new THREE.IcosahedronGeometry( 8 );
+  const geometry = new THREE.IcosahedronGeometry( 2 );
   const material = new THREE.MeshStandardMaterial({ color: 'red'});
   const icosahedron = new THREE.Mesh(geometry, material);
+  icosahedron.position.y = +15
   scene.add(icosahedron);
-
-  const fontLoader = new FontLoader();
-  fontLoader.load(
-    'node_modules/three/examples/fonts/helvetiker_bold.typeface.json',
-    ( helvetiker: string ) => {
-      const textGeometry = new TextGeometry('Skill Check', {
-        height: 2, 
-        size: 2,
-        font: helvetiker
-      });
-      const textMaterial = new THREE.MeshNormalMaterial();
-      const textMesh = new THREE.Mesh(textGeometry, textMaterial)
-      textMesh.position.x = -36;
-      textMesh.position.y = 5;
-      scene.add(textMesh)
-    }
-  );
-
-
+  physics.addMesh( icosahedron );
 
   // PointLight (color, intensity, dsitancy, decay)
   const light = new THREE.HemisphereLight( 0xffffbb, 0x080820, 2 );
@@ -57,9 +52,6 @@ function createScene() {
   // Create a render loop
   function animate() {
     requestAnimationFrame(animate);
-      icosahedron.rotation.x += 0.01;
-      icosahedron.rotation.y += 0.01;
-      icosahedron.rotation.z += 0.01;
     renderer.render(scene, camera);
   }
 
